@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 
 class MapsPage extends StatefulWidget {
   const MapsPage({super.key});
@@ -42,14 +44,14 @@ class _MapsPageState extends State<MapsPage>
             child: Stack(
               children: [
                 // Map background with rounded bottom corners
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade300,
-                    borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(24),
-                      bottomRight: Radius.circular(24),
-                    ),
+                ClipRRect(
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(24),
+                    bottomRight: Radius.circular(24),
                   ),
+                  child: SizedBox.expand(child: _maps()),
+                ),
+                Center(
                   child: Center(
                     child: AnimatedBuilder(
                       animation: _animation,
@@ -83,6 +85,7 @@ class _MapsPageState extends State<MapsPage>
                     ),
                   ),
                 ),
+
                 // Greeting Card Overlay
                 Positioned(
                   top: 16,
@@ -240,4 +243,19 @@ class _MapsPageState extends State<MapsPage>
       ),
     );
   }
+
+  Widget _maps() {
+    return FlutterMap(
+      options: MapOptions(
+        initialCenter: LatLng(3.175133696911346, 101.72470316638486),
+        initialZoom: 19,
+      ),
+      children: [openStreetMapTileLayer],
+    );
+  }
 }
+
+TileLayer get openStreetMapTileLayer => TileLayer(
+  urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+  userAgentPackageName: 'dev.fleaflet.flutter_map.example',
+);

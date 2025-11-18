@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 
-import 'maps.dart';
 import 'checkin.dart';
-import 'tasks.dart';
+import 'maps.dart';
 import 'profile.dart';
+import 'tasks.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -176,14 +178,14 @@ class _HomeViewState extends State<HomeView>
             child: Stack(
               children: [
                 // Map background with rounded bottom corners
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade300,
-                    borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(24),
-                      bottomRight: Radius.circular(24),
-                    ),
+                ClipRRect(
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(24),
+                    bottomRight: Radius.circular(24),
                   ),
+                  child: SizedBox.expand(child: _maps()),
+                ),
+                Center(
                   child: Center(
                     child: AnimatedBuilder(
                       animation: _animation,
@@ -512,4 +514,19 @@ class _HomeViewState extends State<HomeView>
       ),
     );
   }
+
+  Widget _maps() {
+    return FlutterMap(
+      options: MapOptions(
+        initialCenter: LatLng(3.175133696911346, 101.72470316638486),
+        initialZoom: 19,
+      ),
+      children: [openStreetMapTileLayer],
+    );
+  }
 }
+
+TileLayer get openStreetMapTileLayer => TileLayer(
+  urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+  userAgentPackageName: 'dev.fleaflet.flutter_map.example',
+);
